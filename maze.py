@@ -5,7 +5,7 @@ from random import shuffle
 class Maze:
     def __init__(self):
         self.deck = list(range(52))
-        self.values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 10, 10, 10, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+        self.values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] * 4
         
     def gen_rand_decks(self):
     	shuffle(self.deck)
@@ -14,11 +14,21 @@ class Maze:
          return self.values[x]
          
     def ksa(self):
-         val = self.get_val(self.deck[0])
          self.deck.append(self.deck.pop(0))
-         self.deck.insert(val, self.deck.pop(0))
          self.deck.append(self.deck.pop(0))
-         return self.deck[0] % 26
+         
+         card1 = self.get_val(self.deck[0])
+         card2 = self.get_val(self.deck[1])
+         
+         self.deck.append(self.deck.pop(card1+1))
+         self.deck.append(self.deck.pop(card2+1))
+         for x in range(card1):
+               self.deck.append(self.deck.pop(card2+1))
+         v = self.get_val(self.deck[0])
+         z = self.get_val(self.deck[1])
+         self.deck.append(self.deck.pop(0))
+         self.deck.append(self.deck.pop(0))
+         return self.deck[v + z] % 26
          
     def encrypt_letter(self, letter):
         key = self.ksa()
@@ -44,11 +54,4 @@ class Maze:
         for x in range(len(letters)):
             letter = self.decrypt_letter(letters[x])
             ptxt.append(letter)
-        return "".join(ptxt)
-        
-maze = Maze()
-maze.gen_rand_decks()
-m = [chr(65)] * 100000
-msg = "".join(m)
-ctxt = maze.encrypt(msg)
-print(ctxt)
+        return "".join(ptxt
